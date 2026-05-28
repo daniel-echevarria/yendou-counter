@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useCounter } from "../hooks/useCounter";
 
 export function Counter() {
-  const [count, setCount] = useState(0);
+  const { count, increment } = useCounter();
 
   return (
     <div className="flex flex-col items-center gap-8">
@@ -10,7 +10,7 @@ export function Counter() {
       </span>
 
       <button
-        onClick={() => setCount((prev) => prev + 1)}
+        onClick={increment}
         className="rounded-xl bg-[#74C898] px-8 py-3 text-sm font-semibold text-white hover:bg-[#5fb882] active:bg-[#4ea872] transition-colors cursor-pointer"
       >
         +1
