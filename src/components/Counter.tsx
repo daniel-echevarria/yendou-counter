@@ -99,7 +99,7 @@ function CounterToast({ count }: { count: number }) {
       initial={{ x: 50, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ type: "spring", stiffness: 350, damping: 25 }}
-      className="relative min-w-[320px] rounded-[10px] p-[2px] shadow-[0_0_0_1px_rgba(40,41,50,0.04),0_2px_2px_-1px_rgba(40,41,50,0.04),0_4px_4px_-2px_rgba(40,41,50,0.04),0_8px_8px_-4px_rgba(40,41,50,0.06),0_16px_32px_rgba(40,41,50,0.06)]"
+      className="relative min-w-[280px] sm:min-w-[320px] rounded-[10px] p-[2px] shadow-[0_0_0_1px_rgba(40,41,50,0.04),0_2px_2px_-1px_rgba(40,41,50,0.04),0_4px_4px_-2px_rgba(40,41,50,0.04),0_8px_8px_-4px_rgba(40,41,50,0.06),0_16px_32px_rgba(40,41,50,0.06)]"
       style={{
         background:
           "radial-gradient(30% 200% at 0% 50%, rgba(116,200,152,0.4) 0%, rgba(116,200,152,0.01) 100%), #3E3F45",
