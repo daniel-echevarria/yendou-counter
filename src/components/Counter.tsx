@@ -1,33 +1,105 @@
 import { useCounter } from "../hooks/useCounter";
 import { toast } from "sonner";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+
+interface Sparkle {
+  id: number;
+  x: number;
+  y: number;
+  size: number;
+  angle: number;
+  distance: number;
+}
+
+function createSparkles(): Sparkle[] {
+  return Array.from({ length: 14 }, (_, i) => ({
+    id: Date.now() + i,
+    x: (Math.random() - 0.5) * 80,
+    y: (Math.random() - 0.5) * 50,
+    size: Math.random() * 6 + 3,
+    angle: (i * 26) + (Math.random() * 15 - 7),
+    distance: Math.random() * 70 + 50,
+  }));
+}
 
 export function Counter() {
   const { count, increment } = useCounter();
+  const [sparkles, setSparkles] = useState<Sparkle[]>([]);
 
   const handleIncrement = () => {
     increment();
+    setSparkles(createSparkles());
     toast.custom(() => <CounterToast count={count + 1} />);
   };
 
   return (
     <div className="flex flex-col items-center gap-8">
-      <span className="text-8xl font-semibold text-white tabular-nums">
-        {count}
-      </span>
+      <div className="relative h-[96px] flex items-center justify-center">
+        {/* Sparkles */}
+        <AnimatePresence>
+          {sparkles.map((sparkle) => {
+            const rad = (sparkle.angle * Math.PI) / 180;
+            const tx = Math.cos(rad) * sparkle.distance;
+            const ty = Math.sin(rad) * sparkle.distance;
 
-      <button
+            return (
+              <motion.span
+                key={sparkle.id}
+                initial={{ opacity: 1, scale: 1, x: 0, y: 0 }}
+                animate={{ opacity: 0, scale: 0, x: tx, y: ty }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+                onAnimationComplete={() =>
+                  setSparkles((prev) => prev.filter((s) => s.id !== sparkle.id))
+                }
+                className="absolute rounded-full bg-[#74C898]"
+                style={{
+                  width: sparkle.size,
+                  height: sparkle.size,
+                }}
+              />
+            );
+          })}
+        </AnimatePresence>
+
+        {/* Counter number */}
+        <div className="overflow-hidden">
+          <AnimatePresence mode="popLayout">
+            <motion.span
+              key={count}
+              initial={{ y: 40, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -40, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              className="text-8xl font-semibold text-white tabular-nums block"
+            >
+              {count}
+            </motion.span>
+          </AnimatePresence>
+        </div>
+      </div>
+
+      <motion.button
         onClick={handleIncrement}
-        className="rounded-xl bg-[#74C898] px-8 py-3 text-sm font-semibold text-white hover:bg-[#5fb882] active:bg-[#4ea872] transition-colors cursor-pointer"
+        whileTap={{ scale: 0.95 }}
+        whileHover={{ scale: 1.03 }}
+        transition={{ type: "spring", stiffness: 400, damping: 15 }}
+        className="rounded-[10px] bg-[#74C898] px-10 py-4 text-base font-semibold text-white shadow-[0_0_20px_rgba(116,200,152,0.2)] hover:shadow-[0_0_30px_rgba(116,200,152,0.35)] hover:bg-[#5fb882] active:bg-[#4ea872] transition-[background-color,box-shadow] duration-200 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#74C898]"
       >
         +1
-      </button>
+      </motion.button>
     </div>
   );
 }
 
 function CounterToast({ count }: { count: number }) {
   return (
-    <div className="relative min-w-[320px] rounded-[10px] p-[2px] shadow-[0_0_0_1px_rgba(40,41,50,0.04),0_2px_2px_-1px_rgba(40,41,50,0.04),0_4px_4px_-2px_rgba(40,41,50,0.04),0_8px_8px_-4px_rgba(40,41,50,0.06),0_16px_32px_rgba(40,41,50,0.06)]"
+    <motion.div
+      initial={{ x: 50, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      transition={{ type: "spring", stiffness: 350, damping: 25 }}
+      className="relative min-w-[320px] rounded-[10px] p-[2px] shadow-[0_0_0_1px_rgba(40,41,50,0.04),0_2px_2px_-1px_rgba(40,41,50,0.04),0_4px_4px_-2px_rgba(40,41,50,0.04),0_8px_8px_-4px_rgba(40,41,50,0.06),0_16px_32px_rgba(40,41,50,0.06)]"
       style={{
         background:
           "radial-gradient(30% 200% at 0% 50%, rgba(116,200,152,0.4) 0%, rgba(116,200,152,0.01) 100%), #3E3F45",
@@ -62,6 +134,6 @@ function CounterToast({ count }: { count: number }) {
           </span>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
